@@ -4,6 +4,14 @@ import {getDimensions} from './api'
 (async function () {
     const data = await getDimensions();
 
+    function mappingData(row) {
+        return {
+            x: row.width,
+            y: row.height,
+            r: row.count
+        }
+    }
+
     new Chart(
         document.getElementById('dimensions'),
         {
@@ -32,31 +40,19 @@ import {getDimensions} from './api'
                         label: 'width = height',
                         data: data
                             .filter(row => row.width === row.height)
-                            .map(row => ({
-                                x: row.width,
-                                y: row.height,
-                                r: row.count
-                            }))
+                            .map(mappingData)
                     },
                     {
                         label: 'width > height',
                         data: data
                             .filter(row => row.width > row.height)
-                            .map(row => ({
-                                x: row.width,
-                                y: row.height,
-                                r: row.count
-                            }))
+                            .map(mappingData)
                     },
                     {
                         label: 'width < height',
                         data: data
                             .filter(row => row.width < row.height)
-                            .map(row => ({
-                                x: row.width,
-                                y: row.height,
-                                r: row.count
-                            }))
+                            .map(mappingData)
                     }
                 ]
             }
