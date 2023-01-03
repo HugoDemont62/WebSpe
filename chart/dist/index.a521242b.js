@@ -536,25 +536,17 @@ var _auto = require("chart.js/auto");
 var _api = require("./api");
 (async function() {
     const data = await (0, _api.getAquisitionsByYear)();
+    const counts = data.map((row)=>row.count / 50);
+    const years = data.map((row)=>row.years);
     new (0, _auto.Chart)(document.getElementById("acquisitions"), {
-        type: "bar",
-        options: {
-            animation: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: false
-                }
-            }
-        },
+        type: "scatter",
         data: {
             labels: data.map((row)=>row.year),
             datasets: [
                 {
                     label: "Acquisitions by year",
-                    data: data.map((row)=>row.count)
+                    data: counts,
+                    hoverOffset: counts
                 }
             ]
         }

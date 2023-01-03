@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title> Bar 1 </title>
+    <style type="text/css">
+        .chart div {
+            background-color: steelblue;
+        }
+    </style>
+    <script src="d3.js"></script>
+</head>
+
+<body>
+<div class="chart"> </div>
+
+<script>
+    let data = [{
+        "name": "Lucie",
+        "value": 4
+    },
+        {
+            "name": "Tom",
+            "value": 8
+        },
+        {
+            "name": "Ernest",
+            "value": 15
+        },
+        {
+            "name": "Alice",
+            "value": 16
+        },
+        {
+            "name": "Joe",
+            "value": 23
+        },
+        {
+            "name": "Laure",
+            "value": 42
+        }
+    ];
+
+    d3.select(".chart")
+        .selectAll("div")
+        .data(data)
+        .enter()
+        .append("div")
+        .style("width", d => "30px")
+        .text(d => d.value);
+</script>
+</body>
+
+</html>

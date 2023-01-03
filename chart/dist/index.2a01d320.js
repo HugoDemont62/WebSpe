@@ -536,21 +536,59 @@ var _auto = require("chart.js/auto");
 var _api = require("./api");
 (async function() {
     const data = await (0, _api.getDimensions)();
+    function mappingData(row) {
+        return {
+            x: row.width,
+            y: row.height,
+            r: row.count
+        };
+    }
+    function displayTicks(value) {
+        if (value % 100 !== 0) return "";
+        return value / 100 + " m";
+    }
+    const chartAreaBorder = {
+        id: "chartAreaBorder",
+        beforeDraw (chart, args, options) {
+            const { ctx , chartArea: { left , top , width , height  }  } = chart;
+            ctx.save();
+            ctx.strokeStyle = options.borderColor;
+            ctx.lineWidth = options.borderWidth;
+            ctx.setLineDash(options.borderDash || []);
+            ctx.lineDashOffset = options.borderDashOffset;
+            ctx.strokeRect(left, top, width, height);
+            ctx.restore();
+        }
+    };
     new (0, _auto.Chart)(document.getElementById("dimensions"), {
         type: "bubble",
+        plugins: [
+            chartAreaBorder
+        ],
         options: {
             aspectRatio: 1,
+            plugins: {
+                chartAreaBorder: {
+                    borderColor: "red",
+                    borderWidth: 2,
+                    borderDash: [
+                        5,
+                        5
+                    ],
+                    borderDashOffset: 2
+                }
+            },
             scales: {
                 x: {
                     max: 500,
                     ticks: {
-                        callback: (value)=>`${value / 100} m`
+                        callback: displayTicks
                     }
                 },
                 y: {
                     max: 500,
                     ticks: {
-                        callback: (value)=>`${value / 100} m`
+                        callback: displayTicks
                     }
                 }
             }
@@ -560,27 +598,15 @@ var _api = require("./api");
             datasets: [
                 {
                     label: "width = height",
-                    data: data.filter((row)=>row.width === row.height).map((row)=>({
-                            x: row.width,
-                            y: row.height,
-                            r: row.count
-                        }))
+                    data: data.filter((row)=>row.width === row.height).map(mappingData)
                 },
                 {
                     label: "width > height",
-                    data: data.filter((row)=>row.width > row.height).map((row)=>({
-                            x: row.width,
-                            y: row.height,
-                            r: row.count
-                        }))
+                    data: data.filter((row)=>row.width > row.height).map(mappingData)
                 },
                 {
                     label: "width < height",
-                    data: data.filter((row)=>row.width < row.height).map((row)=>({
-                            x: row.width,
-                            y: row.height,
-                            r: row.count
-                        }))
+                    data: data.filter((row)=>row.width < row.height).map(mappingData)
                 }
             ]
         }
